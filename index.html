@@ -1,302 +1,696 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scale Protocol - Archetype Quiz</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Which Man Are You? - The Scale Archetype Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #4c1d95, #1e293b, #7c2d12, #0f172a, #1e293b);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            animation: pulseGlow 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .header .divider {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #f59e0b, #ea580c);
+            margin: 0 auto 25px;
+        }
+
+        .header .description {
+            color: #cbd5e1;
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #475569;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #f59e0b, #ea580c);
+            transition: width 0.3s ease;
+        }
+
+        .question-box {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .question-box h2 {
+            font-size: 1.75rem;
+            margin-bottom: 30px;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-btn {
+            width: 100%;
+            text-align: left;
+            padding: 18px 20px;
+            background: rgba(51, 65, 85, 0.5);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: #cbd5e1;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(245, 158, 11, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .answer-btn:hover {
+            background: #475569;
+            border-color: #f59e0b;
+            transform: translateX(5px);
+        }
+
+        .answer-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .answer-btn.clicked {
+            animation: answerClick 0.4s ease-out;
+        }
+
+        @keyframes answerClick {
+            0% {
+                transform: scale(1);
+                background: rgba(51, 65, 85, 0.5);
+            }
+            50% {
+                transform: scale(0.98);
+                background: rgba(245, 158, 11, 0.3);
+                border-color: #f59e0b;
+            }
+            100% {
+                transform: scale(1);
+                background: rgba(51, 65, 85, 0.5);
+            }
+        }
+
+        .result-box {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            animation: resultReveal 1s ease-out;
+        }
+
+        @keyframes resultReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(30px);
+            }
+            60% {
+                transform: scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: iconBounce 1.2s ease-out 0.3s;
+            display: inline-block;
+        }
+
+        @keyframes iconBounce {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.2) rotate(10deg);
+            }
+            80% {
+                transform: scale(0.95) rotate(-5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .result-box h2 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: fadeInUp 0.8s ease-out 0.5s backwards;
+        }
+
+        .result-tagline {
+            font-size: 1.25rem;
+            color: #f59e0b;
+            font-style: italic;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .result-description {
+            text-align: left;
+            color: #cbd5e1;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            animation: fadeInUp 0.8s ease-out 0.7s backwards;
+        }
+
+        .result-shadow {
+            text-align: left;
+            color: #fca5a5;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            animation: fadeInUp 0.8s ease-out 0.8s backwards;
+        }
+
+        .result-growth {
+            text-align: left;
+            color: #86efac;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.9s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-box {
+            background: linear-gradient(to right, #d97706, #ea580c);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out 1s backwards;
+        }
+
+        .cta-box h3 {
+            font-size: 1.75rem;
+            margin-bottom: 15px;
+        }
+
+        .cta-box p {
+            color: #fef3c7;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: white;
+            color: #0f172a;
+            font-weight: bold;
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .cta-btn:hover {
+            background: #f1f5f9;
+            transform: scale(1.05);
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #1e293b;
+        }
+
+        .footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .question-box {
+                padding: 25px;
+            }
+            
+            .result-box h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white min-h-screen">
-  <div id="app" class="p-4 md:p-8">
-    <div class="max-w-2xl mx-auto" id="content"></div>
-  </div>
-
-  <script>
-    const questions = [
-      {
-        q: "When facing a major decision, you:",
-        answers: [
-          { text: "Take charge immediately and decide the direction", type: "king", points: 3 },
-          { text: "Analyze all options and strategize the best move", type: "magician", points: 3 },
-          { text: "Consider how it affects the people you care about", type: "lover", points: 3 },
-          { text: "Act decisively without overthinking", type: "warrior", points: 3 },
-          { text: "Seek input but ultimately trust your gut", type: "king", points: 1 }
-        ]
-      },
-      {
-        q: "In a conflict, you're most likely to:",
-        answers: [
-          { text: "Stand your ground and enforce boundaries", type: "warrior", points: 3 },
-          { text: "Understand the deeper dynamics at play", type: "magician", points: 3 },
-          { text: "Seek resolution that preserves the relationship", type: "lover", points: 3 },
-          { text: "Lead the situation toward a clear outcome", type: "king", points: 3 },
-          { text: "Avoid it unless absolutely necessary", type: "lover", points: 1 }
-        ]
-      },
-      {
-        q: "Your ideal weekend involves:",
-        answers: [
-          { text: "Deep work on a project or learning something new", type: "magician", points: 3 },
-          { text: "Physical training or competitive activity", type: "warrior", points: 3 },
-          { text: "Quality time with people you love", type: "lover", points: 3 },
-          { text: "Planning and organizing your next moves", type: "king", points: 3 },
-          { text: "A mix of productivity and pleasure", type: "magician", points: 1 }
-        ]
-      },
-      {
-        q: "People describe you as:",
-        answers: [
-          { text: "Intense and driven", type: "warrior", points: 3 },
-          { text: "Insightful and strategic", type: "magician", points: 3 },
-          { text: "Passionate and connected", type: "lover", points: 3 },
-          { text: "Commanding and decisive", type: "king", points: 3 },
-          { text: "Balanced and grounded", type: "king", points: 1 }
-        ]
-      },
-      {
-        q: "When you're stressed, you:",
-        answers: [
-          { text: "Push harder until you break through", type: "warrior", points: 3 },
-          { text: "Retreat inward to think and strategize", type: "magician", points: 3 },
-          { text: "Feel everything deeply and need connection", type: "lover", points: 3 },
-          { text: "Take control and impose order", type: "king", points: 3 },
-          { text: "Become cold and disconnected", type: "magician", points: 1 }
-        ]
-      },
-      {
-        q: "Your relationship to rules is:",
-        answers: [
-          { text: "I make the rules or break them intentionally", type: "king", points: 3 },
-          { text: "I follow what makes strategic sense", type: "magician", points: 3 },
-          { text: "I value connection over rigid structures", type: "lover", points: 3 },
-          { text: "I respect discipline and structure", type: "warrior", points: 3 },
-          { text: "Rules are guidelines, not absolutes", type: "magician", points: 1 }
-        ]
-      },
-      {
-        q: "What drives you most?",
-        answers: [
-          { text: "Building something that lasts", type: "king", points: 3 },
-          { text: "Mastering skills and knowledge", type: "magician", points: 3 },
-          { text: "Deep experiences and connections", type: "lover", points: 3 },
-          { text: "Achieving goals and winning", type: "warrior", points: 3 },
-          { text: "Freedom and autonomy", type: "king", points: 1 }
-        ]
-      },
-      {
-        q: "Your biggest weakness is:",
-        answers: [
-          { text: "Being too controlling or rigid", type: "king", points: 3 },
-          { text: "Overthinking instead of acting", type: "magician", points: 3 },
-          { text: "Getting lost in emotion or pleasure", type: "lover", points: 3 },
-          { text: "Burning out from relentless drive", type: "warrior", points: 3 },
-          { text: "Struggling to trust others", type: "warrior", points: 1 }
-        ]
-      },
-      {
-        q: "In a group, you naturally:",
-        answers: [
-          { text: "Lead and set the direction", type: "king", points: 3 },
-          { text: "Strategize and advise", type: "magician", points: 3 },
-          { text: "Connect people and create energy", type: "lover", points: 3 },
-          { text: "Execute and get things done", type: "warrior", points: 3 },
-          { text: "Observe and assess dynamics", type: "magician", points: 1 }
-        ]
-      },
-      {
-        q: "Your relationship to pleasure is:",
-        answers: [
-          { text: "I enjoy it but don't need it", type: "king", points: 3 },
-          { text: "I'm often disconnected from it", type: "magician", points: 3 },
-          { text: "I live for deep experiences", type: "lover", points: 3 },
-          { text: "I delay it until the mission is complete", type: "warrior", points: 3 },
-          { text: "I balance work and play", type: "lover", points: 1 }
-        ]
-      }
-    ];
-
-    const results = {
-      king: {
-        icon: "crown",
-        title: "The King",
-        tagline: "You are the architect of order and vision.",
-        description: "You're driven by purpose and responsibility. You see the bigger picture and naturally take charge when leadership is needed. People look to you for direction because you provide stability in chaos. Your strength is your ability to create structure and inspire others through your certainty.",
-        shadow: "But beware: when wounded, the King becomes either the Tyrant (controlling, domineering) or the Weakling (passive, avoiding responsibility). Your challenge is to lead with blessing, not domination.",
-        growth: "Develop your Lover energy to stay connected to joy and passion. Cultivate your Warrior to execute on your vision without hesitation."
-      },
-      warrior: {
-        icon: "swords",
-        title: "The Warrior",
-        tagline: "You are the embodiment of discipline and action.",
-        description: "You're built for execution. When others hesitate, you move. You have the discipline to endure discomfort and the courage to face challenges head-on. Your boundaries are clear, and you protect what matters without apology. You don't negotiate with your feelings—you act despite them.",
-        shadow: "But beware: when wounded, the Warrior becomes either the Sadist (cruel, aggressive without cause) or the Masochist (turns aggression inward, can't set boundaries). Your challenge is to serve something greater than yourself.",
-        growth: "Develop your Magician energy to think strategically before acting. Cultivate your Lover to remember what you're fighting for."
-      },
-      magician: {
-        icon: "sparkles",
-        title: "The Magician",
-        tagline: "You are the master of insight and transformation.",
-        description: "You see patterns others miss. You understand systems—psychology, strategy, leverage. You're the advisor, the one who knows how things really work beneath the surface. Your power comes from knowledge and your ability to transform situations through insight rather than force.",
-        shadow: "But beware: when wounded, the Magician becomes either the Manipulator (uses knowledge for selfish gain) or the Innocent (refuses to see truth to avoid responsibility). Your challenge is to use your insight in service of others, not just yourself.",
-        growth: "Develop your Warrior energy to act on what you know instead of staying in analysis. Cultivate your King to provide direction for your knowledge."
-      },
-      lover: {
-        icon: "heart",
-        title: "The Lover",
-        tagline: "You are the embodiment of passion and connection.",
-        description: "You feel deeply and experience life vividly. You're connected to beauty, pleasure, emotion, and meaning. Your strength is your ability to connect—with yourself, with others, with the moment. You bring aliveness to everything you touch. You don't just exist; you experience.",
-        shadow: "But beware: when wounded, the Lover becomes either the Addict (chasing sensation without satisfaction) or the Impotent (numb, disconnected, unable to feel). Your challenge is to channel your passion into creation, not just consumption.",
-        growth: "Develop your Warrior energy to add discipline to your passion. Cultivate your King to give structure to your creativity."
-      }
-    };
-
-    let currentQuestion = 0;
-    let scores = { king: 0, warrior: 0, magician: 0, lover: 0 };
-    let showResult = false;
-
-    function handleAnswer(type, points) {
-      scores[type] += points;
-      
-      if (currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        render();
-      } else {
-        showResult = true;
-        render();
-      }
-    }
-
-    function getTopArchetype() {
-      return Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-    }
-
-    function resetQuiz() {
-      currentQuestion = 0;
-      scores = { king: 0, warrior: 0, magician: 0, lover: 0 };
-      showResult = false;
-      render();
-    }
-
-    function render() {
-      const content = document.getElementById('content');
-      
-      if (showResult) {
-        const topArchetype = getTopArchetype();
-        const result = results[topArchetype];
-        
-        content.innerHTML = `
-          <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold mb-2">YOUR ARCHETYPE</h1>
-            <div class="w-24 h-1 bg-gradient-to-r from-amber-500 to-orange-500 mx-auto"></div>
-          </div>
-
-          <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-8 mb-6">
-            <div class="flex items-center justify-center mb-6">
-              <i data-lucide="${result.icon}" class="w-20 h-20 text-amber-500"></i>
+<body>
+    <div class="container">
+        <div id="quiz-start">
+            <div class="header">
+                <h1>Which Man Are You?</h1>
+                <p class="subtitle">The Scale Archetype Test</p>
+                <div class="divider"></div>
+                <p class="description">Discover your dominant masculine archetype. 10 questions. No bullshit.</p>
             </div>
-            
-            <h2 class="text-4xl font-bold text-center mb-2">${result.title}</h2>
-            <p class="text-xl text-amber-500 text-center mb-8 italic">${result.tagline}</p>
-            
-            <div class="space-y-4 text-slate-300 leading-relaxed">
-              <p>${result.description}</p>
-              <p class="text-red-400">${result.shadow}</p>
-              <p class="text-emerald-400">${result.growth}</p>
+        </div>
+
+        <div id="progress-section" class="hidden">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span>Question <span id="current-q">1</span> of 10</span>
+                    <span><span id="progress-percent">0</span>%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
             </div>
-          </div>
+        </div>
 
-          <div class="bg-gradient-to-r from-amber-600 to-orange-600 rounded-lg p-6 mb-6 text-center">
-            <h3 class="text-2xl font-bold mb-3">Want to develop ALL four archetypes?</h3>
-            <p class="mb-4 text-slate-100">
-              Scale Protocol gives you the complete system for integrating King, Warrior, Magician, and Lover—plus frameworks for money and relationships.
-            </p>
-            <a 
-              href="https://scaleprotocol.gumroad.com/l/sp"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-block bg-white text-slate-900 font-bold px-8 py-3 rounded-lg hover:bg-slate-100 transition-colors"
-            >
-              Get Scale Protocol – $29
-            </a>
-          </div>
+        <div id="question-section" class="question-box">
+            <h2 id="question-text"></h2>
+            <div class="answers" id="answers"></div>
+        </div>
 
-          <button
-            onclick="resetQuiz()"
-            class="w-full py-3 border border-slate-600 rounded-lg hover:bg-slate-800 transition-colors"
-          >
-            Take Quiz Again
-          </button>
+        <div id="result-section" class="hidden">
+            <div class="result-box">
+                <div class="result-icon" id="result-icon"></div>
+                <h2 id="result-title"></h2>
+                <p class="result-tagline" id="result-tagline"></p>
+                <p class="result-description" id="result-description"></p>
+                <p class="result-shadow" id="result-shadow"></p>
+                <p class="result-growth" id="result-growth"></p>
+            </div>
 
-          <div class="text-center mt-6 text-slate-500 text-sm">
+            <div class="cta-box">
+                <h3>Want to develop ALL four archetypes?</h3>
+                <p>Scale Protocol gives you the complete system for integrating King, Warrior, Magician, and Lover—plus frameworks for money and relationships.</p>
+                <a href="https://scaleprotocol.gumroad.com/l/sp" target="_blank" class="cta-btn">Get Scale Protocol – $29</a>
+            </div>
+
+            <button class="reset-btn" onclick="resetQuiz()">Take Quiz Again</button>
+        </div>
+
+        <div class="footer">
             Scale Protocol • Build yourself. The rest follows.
-          </div>
-        `;
-        
-        lucide.createIcons();
-      } else {
-        const question = questions[currentQuestion];
-        const progress = (currentQuestion / questions.length) * 100;
-        
-        content.innerHTML = `
-          ${currentQuestion === 0 ? `
-            <div class="text-center mb-12">
-              <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                Which Man Are You?
-              </h1>
-              <p class="text-xl text-slate-400 mb-2">The Scale Archetype Test</p>
-              <div class="w-24 h-1 bg-gradient-to-r from-amber-500 to-orange-500 mx-auto mb-6"></div>
-              <p class="text-slate-300 max-w-xl mx-auto">
-                Discover your dominant masculine archetype. 10 questions. No bullshit.
-              </p>
-            </div>
-          ` : ''}
+        </div>
+    </div>
 
-          <div class="mb-8">
-            <div class="flex justify-between items-center mb-4">
-              <span class="text-sm text-slate-400">
-                Question ${currentQuestion + 1} of ${questions.length}
-              </span>
-              <span class="text-sm text-slate-400">
-                ${Math.round(progress)}%
-              </span>
-            </div>
-            <div class="w-full bg-slate-700 rounded-full h-2">
-              <div 
-                class="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full transition-all duration-300"
-                style="width: ${progress}%"
-              ></div>
-            </div>
-          </div>
+    <script>
+        const questions = [
+            {
+                q: "When facing a major decision, you:",
+                answers: [
+                    { text: "Take charge immediately and decide the direction", type: "king", points: 3 },
+                    { text: "Analyze all options and strategize the best move", type: "magician", points: 3 },
+                    { text: "Consider how it affects the people you care about", type: "lover", points: 3 },
+                    { text: "Act decisively without overthinking", type: "warrior", points: 3 },
+                    { text: "Seek input but ultimately trust your gut", type: "king", points: 1 }
+                ]
+            },
+            {
+                q: "In a conflict, you're most likely to:",
+                answers: [
+                    { text: "Stand your ground and enforce boundaries", type: "warrior", points: 3 },
+                    { text: "Understand the deeper dynamics at play", type: "magician", points: 3 },
+                    { text: "Seek resolution that preserves the relationship", type: "lover", points: 3 },
+                    { text: "Lead the situation toward a clear outcome", type: "king", points: 3 },
+                    { text: "Avoid it unless absolutely necessary", type: "lover", points: 1 }
+                ]
+            },
+            {
+                q: "Your ideal weekend involves:",
+                answers: [
+                    { text: "Deep work on a project or learning something new", type: "magician", points: 3 },
+                    { text: "Physical training or competitive activity", type: "warrior", points: 3 },
+                    { text: "Quality time with people you love", type: "lover", points: 3 },
+                    { text: "Planning and organizing your next moves", type: "king", points: 3 },
+                    { text: "A mix of productivity and pleasure", type: "magician", points: 1 }
+                ]
+            },
+            {
+                q: "People describe you as:",
+                answers: [
+                    { text: "Intense and driven", type: "warrior", points: 3 },
+                    { text: "Insightful and strategic", type: "magician", points: 3 },
+                    { text: "Passionate and connected", type: "lover", points: 3 },
+                    { text: "Commanding and decisive", type: "king", points: 3 },
+                    { text: "Balanced and grounded", type: "king", points: 1 }
+                ]
+            },
+            {
+                q: "When you're stressed, you:",
+                answers: [
+                    { text: "Push harder until you break through", type: "warrior", points: 3 },
+                    { text: "Retreat inward to think and strategize", type: "magician", points: 3 },
+                    { text: "Feel everything deeply and need connection", type: "lover", points: 3 },
+                    { text: "Take control and impose order", type: "king", points: 3 },
+                    { text: "Become cold and disconnected", type: "magician", points: 1 }
+                ]
+            },
+            {
+                q: "Your relationship to rules is:",
+                answers: [
+                    { text: "I make the rules or break them intentionally", type: "king", points: 3 },
+                    { text: "I follow what makes strategic sense", type: "magician", points: 3 },
+                    { text: "I value connection over rigid structures", type: "lover", points: 3 },
+                    { text: "I respect discipline and structure", type: "warrior", points: 3 },
+                    { text: "Rules are guidelines, not absolutes", type: "magician", points: 1 }
+                ]
+            },
+            {
+                q: "What drives you most?",
+                answers: [
+                    { text: "Building something that lasts", type: "king", points: 3 },
+                    { text: "Mastering skills and knowledge", type: "magician", points: 3 },
+                    { text: "Deep experiences and connections", type: "lover", points: 3 },
+                    { text: "Achieving goals and winning", type: "warrior", points: 3 },
+                    { text: "Freedom and autonomy", type: "king", points: 1 }
+                ]
+            },
+            {
+                q: "Your biggest weakness is:",
+                answers: [
+                    { text: "Being too controlling or rigid", type: "king", points: 3 },
+                    { text: "Overthinking instead of acting", type: "magician", points: 3 },
+                    { text: "Getting lost in emotion or pleasure", type: "lover", points: 3 },
+                    { text: "Burning out from relentless drive", type: "warrior", points: 3 },
+                    { text: "Struggling to trust others", type: "warrior", points: 1 }
+                ]
+            },
+            {
+                q: "In a group, you naturally:",
+                answers: [
+                    { text: "Lead and set the direction", type: "king", points: 3 },
+                    { text: "Strategize and advise", type: "magician", points: 3 },
+                    { text: "Connect people and create energy", type: "lover", points: 3 },
+                    { text: "Execute and get things done", type: "warrior", points: 3 },
+                    { text: "Observe and assess dynamics", type: "magician", points: 1 }
+                ]
+            },
+            {
+                q: "Your relationship to pleasure is:",
+                answers: [
+                    { text: "I enjoy it but don't need it", type: "king", points: 3 },
+                    { text: "I'm often disconnected from it", type: "magician", points: 3 },
+                    { text: "I live for deep experiences", type: "lover", points: 3 },
+                    { text: "I delay it until the mission is complete", type: "warrior", points: 3 },
+                    { text: "I balance work and play", type: "lover", points: 1 }
+                ]
+            }
+        ];
 
-          <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-8 mb-6">
-            <h2 class="text-2xl font-bold mb-8">${question.q}</h2>
+        const results = {
+            king: {
+                icon: "👑",
+                title: "The King",
+                tagline: "You are the architect of order and vision.",
+                description: "You're driven by purpose and responsibility. You see the bigger picture and naturally take charge when leadership is needed. People look to you for direction because you provide stability in chaos. Your strength is your ability to create structure and inspire others through your certainty.",
+                shadow: "But beware: when wounded, the King becomes either the Tyrant (controlling, domineering) or the Weakling (passive, avoiding responsibility). Your challenge is to lead with blessing, not domination.",
+                growth: "Develop your Lover energy to stay connected to joy and passion. Cultivate your Warrior to execute on your vision without hesitation."
+            },
+            warrior: {
+                icon: "⚔️",
+                title: "The Warrior",
+                tagline: "You are the embodiment of discipline and action.",
+                description: "You're built for execution. When others hesitate, you move. You have the discipline to endure discomfort and the courage to face challenges head-on. Your boundaries are clear, and you protect what matters without apology. You don't negotiate with your feelings—you act despite them.",
+                shadow: "But beware: when wounded, the Warrior becomes either the Sadist (cruel, aggressive without cause) or the Masochist (turns aggression inward, can't set boundaries). Your challenge is to serve something greater than yourself.",
+                growth: "Develop your Magician energy to think strategically before acting. Cultivate your Lover to remember what you're fighting for."
+            },
+            magician: {
+                icon: "✨",
+                title: "The Magician",
+                tagline: "You are the master of insight and transformation.",
+                description: "You see patterns others miss. You understand systems—psychology, strategy, leverage. You're the advisor, the one who knows how things really work beneath the surface. Your power comes from knowledge and your ability to transform situations through insight rather than force.",
+                shadow: "But beware: when wounded, the Magician becomes either the Manipulator (uses knowledge for selfish gain) or the Innocent (refuses to see truth to avoid responsibility). Your challenge is to use your insight in service of others, not just yourself.",
+                growth: "Develop your Warrior energy to act on what you know instead of staying in analysis. Cultivate your King to provide direction for your knowledge."
+            },
+            lover: {
+                icon: "❤️",
+                title: "The Lover",
+                tagline: "You are the embodiment of passion and connection.",
+                description: "You feel deeply and experience life vividly. You're connected to beauty, pleasure, emotion, and meaning. Your strength is your ability to connect—with yourself, with others, with the moment. You bring aliveness to everything you touch. You don't just exist; you experience.",
+                shadow: "But beware: when wounded, the Lover becomes either the Addict (chasing sensation without satisfaction) or the Impotent (numb, disconnected, unable to feel). Your challenge is to channel your passion into creation, not just consumption.",
+                growth: "Develop your Warrior energy to add discipline to your passion. Cultivate your King to give structure to your creativity."
+            }
+        };
+
+        let currentQuestion = 0;
+        let scores = { king: 0, warrior: 0, magician: 0, lover: 0 };
+
+        function startQuiz() {
+            document.getElementById('progress-section').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question-text').textContent = question.q;
             
-            <div class="space-y-3">
-              ${question.answers.map((answer, idx) => `
-                <button
-                  onclick="handleAnswer('${answer.type}', ${answer.points})"
-                  class="w-full text-left p-4 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 hover:border-amber-500 rounded-lg transition-all duration-200"
-                >
-                  <span class="text-slate-300">${answer.text}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
+            
+            question.answers.forEach((answer, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer.text;
+                btn.onclick = () => handleAnswer(answer.type, answer.points);
+                answersDiv.appendChild(btn);
+            });
 
-          <div class="text-center text-slate-500 text-sm">
-            Scale Protocol • Build yourself. The rest follows.
-          </div>
-        `;
-      }
-    }
+            updateProgress();
+        }
 
-    // Make functions globally available
-    window.handleAnswer = handleAnswer;
-    window.resetQuiz = resetQuiz;
+        function updateProgress() {
+            const percent = Math.round((currentQuestion / questions.length) * 100);
+            document.getElementById('current-q').textContent = currentQuestion + 1;
+            document.getElementById('progress-percent').textContent = percent;
+            document.getElementById('progress-fill').style.width = percent + '%';
+        }
 
-    // Initial render
-    render();
-  </script>
+        function handleAnswer(type, points) {
+            // Add click animation
+            const clickedButton = event.target.closest('.answer-btn');
+            if (clickedButton) {
+                clickedButton.classList.add('clicked');
+                
+                // Wait for animation before moving to next question
+                setTimeout(() => {
+                    scores[type] += points;
+
+                    if (currentQuestion < questions.length - 1) {
+                        currentQuestion++;
+                        showQuestion();
+                    } else {
+                        showResult();
+                    }
+                }, 400);
+            }
+        }
+
+        function showResult() {
+            const topArchetype = Object.keys(scores).reduce((a, b) => 
+                scores[a] > scores[b] ? a : b
+            );
+            
+            const result = results[topArchetype];
+
+            document.getElementById('question-section').classList.add('hidden');
+            document.getElementById('progress-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            document.getElementById('result-icon').textContent = result.icon;
+            document.getElementById('result-title').textContent = result.title;
+            document.getElementById('result-tagline').textContent = result.tagline;
+            document.getElementById('result-description').textContent = result.description;
+            document.getElementById('result-shadow').textContent = result.shadow;
+            document.getElementById('result-growth').textContent = result.growth;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            scores = { king: 0, warrior: 0, magician: 0, lover: 0 };
+            
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('question-section').classList.remove('hidden');
+            document.getElementById('progress-section').classList.remove('hidden');
+            
+            showQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Start quiz on page load
+        window.onload = startQuiz;
+    </script>
 </body>
 </html>
